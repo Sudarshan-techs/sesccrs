@@ -45,16 +45,14 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        input {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
-        button {
-            width: 100%;
-            padding: 10px;
+        nav button {
+            margin: 0 10px;
+            padding: 10px 20px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
@@ -62,8 +60,44 @@
             background-color: #3498db;
             color: white;
         }
-        button:hover {
+        nav button:hover {
             background-color: #2980b9;
+        }
+        nav button.active {
+            background-color: #2980b9;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button.save {
+            background-color: #28a745;
+        }
+        button.save:hover {
+            background-color: #218838;
+        }
+        section {
+            display: none;
+        }
+        section.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #3498db;
+            color: white;
         }
     </style>
 </head>
@@ -159,6 +193,8 @@
         const addEntryBtn = document.getElementById('add-entry-btn');
         const viewEntriesBtn = document.getElementById('view-entries-btn');
         const logoutBtn = document.getElementById('logout-btn');
+        const entryForm = document.getElementById('entry-form');
+        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
 
         // Define the user roles and passwords
         const users = {
@@ -203,7 +239,7 @@
             }
         });
 
-        // Logout button functionality
+        // Handle logout functionality
         logoutBtn.addEventListener('click', () => {
             // Show login page and hide dashboard
             loginPage.style.display = 'block';
@@ -213,6 +249,45 @@
             usernameInput.value = '';
             passwordInput.value = '';
         });
+
+        // Save new entry
+        entryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEntry = {
+                date: document.getElementById('date').value,
+                senderName: document.getElementById('sender-name').value,
+                receiverName: document.getElementById('receiver-name').value,
+                itemDescription: document.getElementById('item-description').value,
+                courierPartner: document.getElementById('courier-partner').value,
+                trackingNumber: document.getElementById('tracking-number').value,
+                handoverBy: document.getElementById('handover-by').value,
+                remarks: document.getElementById('remarks').value,
+            };
+
+            // Simulate adding the entry (for the demo)
+            entries.push(newEntry);
+            alert('Entry saved successfully!');
+            entryForm.reset();
+        });
+
+        // Render entries in the table
+        function renderEntries() {
+            entriesTable.innerHTML = '';
+            entries.forEach((entry) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.senderName}</td>
+                    <td>${entry.receiverName}</td>
+                    <td>${entry.itemDescription}</td>
+                    <td>${entry.courierPartner}</td>
+                    <td>${entry.trackingNumber}</td>
+                    <td>${entry.handoverBy}</td>
+                    <td>${entry.remarks}</td>
+                `;
+                entriesTable.appendChild(row);
+            });
+        }
     </script>
 </body>
 </html>
