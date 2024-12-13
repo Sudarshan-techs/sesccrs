@@ -27,51 +27,60 @@
         h1 {
             margin: 10px 0;
         }
-        #login-section {
-            max-width: 400px;
-            margin: 50px auto;
+        #dashboard {
+            max-width: 900px;
+            margin: 30px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        h2 {
+        nav {
+            margin-bottom: 20px;
             text-align: center;
-            color: #333;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        input[type="text"], input[type="password"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
+        nav button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
+            background-color: #3498db;
+            color: white;
         }
-        button:hover {
+        nav button.active {
             background-color: #2980b9;
         }
-        #home-section {
+        section {
             display: none;
-            text-align: center;
         }
-        .section-header {
+        section.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
-            font-size: 24px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #3498db;
+            color: white;
+        }
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button.save {
+            background-color: #28a745;
         }
     </style>
 </head>
@@ -80,84 +89,128 @@
         <img src="https://www.selectengg.com/assets/images/logo.png" alt="Select Engineering & Systems Logo" class="logo">
         <h1>Courier Portal</h1>
     </header>
-    
-    <main>
-        <section id="login-section">
-            <h2>Login</h2>
-            <form id="login-form">
-                <label for="user-id">User ID:</label>
-                <input type="text" id="user-id" required>
 
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
+    <main id="dashboard">
+        <nav>
+            <button id="add-entry-btn" class="active">Add New Entry</button>
+            <button id="view-entries-btn">View Entries</button>
+        </nav>
 
-                <button type="submit">Login</button>
+        <section id="add-entry" class="active">
+            <h2>Add New Courier Entry</h2>
+            <form id="entry-form">
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+                
+                <label for="sender-name">Sender Name:</label>
+                <input type="text" id="sender-name" required>
+                
+                <label for="receiver-name">Receiver Name:</label>
+                <input type="text" id="receiver-name" required>
+                
+                <label for="item-description">Item Description:</label>
+                <textarea id="item-description" required></textarea>
+                
+                <label for="courier-partner">Courier Partner Name:</label>
+                <input type="text" id="courier-partner" required>
+                
+                <label for="tracking-number">AWB/Tracking No:</label>
+                <input type="text" id="tracking-number" required>
+                
+                <label for="handover-by">Handover By:</label>
+                <input type="text" id="handover-by" required>
+                
+                <label for="remarks">Remarks:</label>
+                <textarea id="remarks"></textarea>
+                
+                <button type="submit" class="save">Save and Submit</button>
             </form>
         </section>
 
-        <section id="home-section">
-            <h2 class="section-header">Welcome to Courier Portal</h2>
-
-            <div id="booking-interface">
-                <h3>Courier Order Booking</h3>
-                <form id="booking-form">
-                    <label for="courier-details">Courier Details:</label>
-                    <textarea id="courier-details" rows="5" required></textarea>
-                    <button type="submit">Submit Booking</button>
-                </form>
-            </div>
-
-            <div id="tracking-interface">
-                <h3>Courier Tracking</h3>
-                <form id="tracking-form">
-                    <label for="tracking-id">Enter Tracking ID:</label>
-                    <input type="text" id="tracking-id" required>
-                    <button type="submit">Track</button>
-                </form>
-                <div id="tracking-result"></div>
-            </div>
-
-            <div id="query-interface">
-                <h3>Courier Queries</h3>
-                <form id="query-form">
-                    <label for="query-details">Your Query:</label>
-                    <textarea id="query-details" rows="5" required></textarea>
-                    <button type="submit">Submit Query</button>
-                </form>
-            </div>
+        <section id="view-entries">
+            <h2>Existing Entries</h2>
+            <table id="entries-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Sender Name</th>
+                        <th>Receiver Name</th>
+                        <th>Item Description</th>
+                        <th>Courier Partner</th>
+                        <th>AWB/Tracking No</th>
+                        <th>Handover By</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be dynamically inserted here -->
+                </tbody>
+            </table>
         </section>
     </main>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAWTLCe2KWU4rTo-ZS3g4jE-DC40PC-oD0",
-            authDomain: "sescouriertracker.firebaseapp.com",
-            projectId: "sescouriertracker",
-            storageBucket: "sescouriertracker.firebasestorage.app",
-            messagingSenderId: "246998621728",
-            appId: "1:246998621728:web:f8de49a865acef7732a645",
-            measurementId: "G-4D1ZXLMS6G"
-        };
+        // Switch between views
+        const addEntryBtn = document.getElementById('add-entry-btn');
+        const viewEntriesBtn = document.getElementById('view-entries-btn');
+        const addEntrySection = document.getElementById('add-entry');
+        const viewEntriesSection = document.getElementById('view-entries');
+        const entryForm = document.getElementById('entry-form');
+        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
 
-        const app = firebase.initializeApp(firebaseConfig);
+        let entries = []; // Array to store courier entries
 
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userId = document.getElementById('user-id').value;
-            const password = document.getElementById('password').value;
-
-            // Simulated authentication (replace this with actual authentication logic if needed)
-            if ((userId === 'admin' || userId === 'support') && password === '123456') {
-                alert('Login successful!');
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('home-section').style.display = 'block';
-            } else {
-                alert('Invalid credentials.');
-            }
+        addEntryBtn.addEventListener('click', () => {
+            addEntrySection.classList.add('active');
+            viewEntriesSection.classList.remove('active');
+            addEntryBtn.classList.add('active');
+            viewEntriesBtn.classList.remove('active');
         });
 
-        // Add handlers for booking, tracking, and queries here
+        viewEntriesBtn.addEventListener('click', () => {
+            viewEntriesSection.classList.add('active');
+            addEntrySection.classList.remove('active');
+            viewEntriesBtn.classList.add('active');
+            addEntryBtn.classList.remove('active');
+            renderEntries();
+        });
+
+        // Save new entry
+        entryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEntry = {
+                date: document.getElementById('date').value,
+                senderName: document.getElementById('sender-name').value,
+                receiverName: document.getElementById('receiver-name').value,
+                itemDescription: document.getElementById('item-description').value,
+                courierPartner: document.getElementById('courier-partner').value,
+                trackingNumber: document.getElementById('tracking-number').value,
+                handoverBy: document.getElementById('handover-by').value,
+                remarks: document.getElementById('remarks').value,
+            };
+            entries.push(newEntry);
+            alert('Entry saved successfully!');
+            entryForm.reset();
+        });
+
+        // Render entries in the table
+        function renderEntries() {
+            entriesTable.innerHTML = '';
+            entries.forEach((entry) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.senderName}</td>
+                    <td>${entry.receiverName}</td>
+                    <td>${entry.itemDescription}</td>
+                    <td>${entry.courierPartner}</td>
+                    <td>${entry.trackingNumber}</td>
+                    <td>${entry.handoverBy}</td>
+                    <td>${entry.remarks}</td>
+                `;
+                entriesTable.appendChild(row);
+            });
+        }
     </script>
 </body>
 </html>
