@@ -27,7 +27,17 @@
         h1 {
             margin: 10px 0;
         }
+        #login-page {
+            display: block;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
         #dashboard {
+            display: none;
             max-width: 900px;
             margin: 30px auto;
             padding: 20px;
@@ -35,13 +45,16 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        nav {
-            margin-bottom: 20px;
-            text-align: center;
+        input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
-        nav button {
-            margin: 0 10px;
-            padding: 10px 20px;
+        button {
+            width: 100%;
+            padding: 10px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
@@ -49,38 +62,8 @@
             background-color: #3498db;
             color: white;
         }
-        nav button.active {
+        button:hover {
             background-color: #2980b9;
-        }
-        section {
-            display: none;
-        }
-        section.active {
-            display: block;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        table th {
-            background-color: #3498db;
-            color: white;
-        }
-        input, textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button.save {
-            background-color: #28a745;
         }
     </style>
 </head>
@@ -90,10 +73,27 @@
         <h1>Courier Portal</h1>
     </header>
 
+    <!-- Login Page -->
+    <div id="login-page">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Main Dashboard -->
     <main id="dashboard">
         <nav>
+            <button id="home-btn">Home</button>
             <button id="add-entry-btn" class="active">Add New Entry</button>
             <button id="view-entries-btn">View Entries</button>
+            <button id="logout-btn">Logout</button>
         </nav>
 
         <section id="add-entry" class="active">
@@ -101,28 +101,28 @@
             <form id="entry-form">
                 <label for="date">Date:</label>
                 <input type="date" id="date" required>
-                
+
                 <label for="sender-name">Sender Name:</label>
                 <input type="text" id="sender-name" required>
-                
+
                 <label for="receiver-name">Receiver Name:</label>
                 <input type="text" id="receiver-name" required>
-                
+
                 <label for="item-description">Item Description:</label>
                 <textarea id="item-description" required></textarea>
-                
+
                 <label for="courier-partner">Courier Partner Name:</label>
                 <input type="text" id="courier-partner" required>
-                
+
                 <label for="tracking-number">AWB/Tracking No:</label>
                 <input type="text" id="tracking-number" required>
-                
+
                 <label for="handover-by">Handover By:</label>
                 <input type="text" id="handover-by" required>
-                
+
                 <label for="remarks">Remarks:</label>
                 <textarea id="remarks"></textarea>
-                
+
                 <button type="submit" class="save">Save and Submit</button>
             </form>
         </section>
@@ -150,67 +150,69 @@
     </main>
 
     <script>
-        // Switch between views
+        // Check login credentials and assign roles
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard');
         const addEntryBtn = document.getElementById('add-entry-btn');
         const viewEntriesBtn = document.getElementById('view-entries-btn');
-        const addEntrySection = document.getElementById('add-entry');
-        const viewEntriesSection = document.getElementById('view-entries');
-        const entryForm = document.getElementById('entry-form');
-        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
+        const logoutBtn = document.getElementById('logout-btn');
 
-        let entries = []; // Array to store courier entries
+        // Define the user roles and passwords
+        const users = {
+            'admin.ses': { role: 'admin', password: '123456' },
+            'support': { role: 'user', password: '123456' },
+            'shiva': { role: 'user', password: '123456' },
+            'suprika': { role: 'user', password: '123456' },
+            'chandana': { role: 'user', password: '123456' },
+            'chandrakala': { role: 'user', password: '123456' },
+            'indrakumar': { role: 'user', password: '123456' },
+            'sudarshan': { role: 'user', password: '123456' },
+            'rameshbabu': { role: 'user', password: '123456' },
+        };
 
-        addEntryBtn.addEventListener('click', () => {
-            addEntrySection.classList.add('active');
-            viewEntriesSection.classList.remove('active');
-            addEntryBtn.classList.add('active');
-            viewEntriesBtn.classList.remove('active');
-        });
-
-        viewEntriesBtn.addEventListener('click', () => {
-            viewEntriesSection.classList.add('active');
-            addEntrySection.classList.remove('active');
-            viewEntriesBtn.classList.add('active');
-            addEntryBtn.classList.remove('active');
-            renderEntries();
-        });
-
-        // Save new entry
-        entryForm.addEventListener('submit', (e) => {
+        // Handle login form submission
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const newEntry = {
-                date: document.getElementById('date').value,
-                senderName: document.getElementById('sender-name').value,
-                receiverName: document.getElementById('receiver-name').value,
-                itemDescription: document.getElementById('item-description').value,
-                courierPartner: document.getElementById('courier-partner').value,
-                trackingNumber: document.getElementById('tracking-number').value,
-                handoverBy: document.getElementById('handover-by').value,
-                remarks: document.getElementById('remarks').value,
-            };
-            entries.push(newEntry);
-            alert('Entry saved successfully!');
-            entryForm.reset();
+            const username = usernameInput.value.trim().toLowerCase();
+            const password = passwordInput.value.trim();
+
+            // Check credentials
+            if (users[username] && users[username].password === password) {
+                const userRole = users[username].role;
+                // Hide the login page and show the dashboard
+                loginPage.style.display = 'none';
+                dashboardPage.style.display = 'block';
+
+                // Set permissions based on the user role
+                if (userRole === 'admin') {
+                    // Admin can access both tabs
+                    addEntryBtn.style.display = 'inline-block';
+                } else {
+                    // Users can only access the View Entries tab
+                    addEntryBtn.style.display = 'none';
+                }
+
+                // Highlight the View Entries tab and show it
+                viewEntriesBtn.classList.add('active');
+                viewEntriesBtn.click();
+            } else {
+                alert('Invalid username or password!');
+            }
         });
 
-        // Render entries in the table
-        function renderEntries() {
-            entriesTable.innerHTML = '';
-            entries.forEach((entry) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${entry.date}</td>
-                    <td>${entry.senderName}</td>
-                    <td>${entry.receiverName}</td>
-                    <td>${entry.itemDescription}</td>
-                    <td>${entry.courierPartner}</td>
-                    <td>${entry.trackingNumber}</td>
-                    <td>${entry.handoverBy}</td>
-                    <td>${entry.remarks}</td>
-                `;
-                entriesTable.appendChild(row);
-            });
-        }
+        // Logout button functionality
+        logoutBtn.addEventListener('click', () => {
+            // Show login page and hide dashboard
+            loginPage.style.display = 'block';
+            dashboardPage.style.display = 'none';
+
+            // Reset the form
+            usernameInput.value = '';
+            passwordInput.value = '';
+        });
     </script>
 </body>
 </html>
