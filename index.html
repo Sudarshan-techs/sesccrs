@@ -99,6 +99,12 @@
             background-color: #3498db;
             color: white;
         }
+        .welcome-message {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 18px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -181,6 +187,11 @@
                 </tbody>
             </table>
         </section>
+
+        <!-- Welcome Message -->
+        <div class="welcome-message" id="welcome-message">
+            <!-- Welcome message will be inserted dynamically -->
+        </div>
     </main>
 
     <script>
@@ -195,6 +206,7 @@
         const logoutBtn = document.getElementById('logout-btn');
         const entryForm = document.getElementById('entry-form');
         const entriesTable = document.getElementById('entries-table').querySelector('tbody');
+        const welcomeMessage = document.getElementById('welcome-message');
 
         // Define the user roles and passwords
         const users = {
@@ -221,6 +233,12 @@
                 // Hide the login page and show the dashboard
                 loginPage.style.display = 'none';
                 dashboardPage.style.display = 'block';
+
+                // Show the welcome message
+                welcomeMessage.innerHTML = `
+                    Welcome to the Select Engineering & Systems - (KTS) Courier Portal<br>
+                    Developed by KTS team
+                `;
 
                 // Set permissions based on the user role
                 if (userRole === 'admin') {
@@ -250,30 +268,29 @@
             passwordInput.value = '';
         });
 
-        // Save new entry
-        entryForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newEntry = {
-                date: document.getElementById('date').value,
-                senderName: document.getElementById('sender-name').value,
-                receiverName: document.getElementById('receiver-name').value,
-                itemDescription: document.getElementById('item-description').value,
-                courierPartner: document.getElementById('courier-partner').value,
-                trackingNumber: document.getElementById('tracking-number').value,
-                handoverBy: document.getElementById('handover-by').value,
-                remarks: document.getElementById('remarks').value,
-            };
-
-            // Simulate adding the entry (for the demo)
-            entries.push(newEntry);
-            alert('Entry saved successfully!');
-            entryForm.reset();
+        // Switch between views
+        addEntryBtn.addEventListener('click', () => {
+            document.getElementById('add-entry').classList.add('active');
+            document.getElementById('view-entries').classList.remove('active');
+            addEntryBtn.classList.add('active');
+            viewEntriesBtn.classList.remove('active');
         });
 
-        // Render entries in the table
-        function renderEntries() {
+        viewEntriesBtn.addEventListener('click', () => {
+            document.getElementById('add-entry').classList.remove('active');
+            document.getElementById('view-entries').classList.add('active');
+            addEntryBtn.classList.remove('active');
+            viewEntriesBtn.classList.add('active');
+            fetchEntries();
+        });
+
+        // Fetch and display existing entries from local storage or API
+        function fetchEntries() {
+            // Clear existing rows
             entriesTable.innerHTML = '';
-            entries.forEach((entry) => {
+            // Fetch data (simulated here with an example object)
+            const entries = JSON.parse(localStorage.getItem('entries') || '[]');
+            entries.forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${entry.date}</td>
@@ -288,6 +305,31 @@
                 entriesTable.appendChild(row);
             });
         }
+
+        // Handle form submission for adding new entries
+        entryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEntry = {
+                date: document.getElementById('date').value,
+                senderName: document.getElementById('sender-name').value,
+                receiverName: document.getElementById('receiver-name').value,
+                itemDescription: document.getElementById('item-description').value,
+                courierPartner: document.getElementById('courier-partner').value,
+                trackingNumber: document.getElementById('tracking-number').value,
+                handoverBy: document.getElementById('handover-by').value,
+                remarks: document.getElementById('remarks').value
+            };
+            // Save the new entry to local storage
+            const entries = JSON.parse(localStorage.getItem('entries') || '[]');
+            entries.push(newEntry);
+            localStorage.setItem('entries', JSON.stringify(entries));
+
+            // Clear the form
+            entryForm.reset();
+
+            // Switch to the View Entries page
+            viewEntriesBtn.click();
+        });
     </script>
 </body>
 </html>
