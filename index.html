@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Engineering & Systems - Courier Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <header>
+        <img src="https://www.selectengg.com/assets/images/logo.png" alt="Select Engineering & Systems Logo" class="logo">
+        <h1>Courier Portal</h1>
+    </header>
+    
+    <main>
+        <section id="login-section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="user-id">User ID:</label>
+                <input type="text" id="user-id" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <section id="home-section" style="display:none;">
+            <h2>Welcome to Courier Portal</h2>
+
+            <div id="booking-interface">
+                <h3>Courier Order Booking</h3>
+                <form id="booking-form">
+                    <label for="courier-details">Courier Details:</label>
+                    <textarea id="courier-details" rows="5" required></textarea>
+                    <button type="submit">Submit Booking</button>
+                </form>
+            </div>
+
+            <div id="tracking-interface">
+                <h3>Courier Tracking</h3>
+                <form id="tracking-form">
+                    <label for="tracking-id">Enter Tracking ID:</label>
+                    <input type="text" id="tracking-id" required>
+                    <button type="submit">Track</button>
+                </form>
+                <div id="tracking-result"></div>
+            </div>
+
+            <div id="query-interface">
+                <h3>Courier Queries</h3>
+                <form id="query-form">
+                    <label for="query-details">Your Query:</label>
+                    <textarea id="query-details" rows="5" required></textarea>
+                    <button type="submit">Submit Query</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWTLCe2KWU4rTo-ZS3g4jE-DC40PC-oD0",
+            authDomain: "sescouriertracker.firebaseapp.com",
+            projectId: "sescouriertracker",
+            storageBucket: "sescouriertracker.firebasestorage.app",
+            messagingSenderId: "246998621728",
+            appId: "1:246998621728:web:f8de49a865acef7732a645",
+            measurementId: "G-4D1ZXLMS6G"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('user-id').value;
+            const password = document.getElementById('password').value;
+
+            // Simulated authentication (Replace with Firebase auth in production)
+            if (userId === 'admin' && password === 'password') {
+                alert('Login successful!');
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('home-section').style.display = 'block';
+            } else {
+                alert('Invalid credentials.');
+            }
+        });
+
+        // Add handlers for booking, tracking, and queries here
+    </script>
+</body>
+</html>
