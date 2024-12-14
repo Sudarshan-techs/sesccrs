@@ -3,8 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Engineering & Systems - Courier Portal</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Login - Select Engineering & Systems</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #2C3E50;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #2C3E50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #1A242F;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button id="loginButton">Login</button>
+        <p class="error" id="error"></p>
+    </div>
+
+    <script>
+        const loginButton = document.getElementById('loginButton');
+        const errorElement = document.getElementById('error');
+
+        const users = {
+            'admin.ses': '123456',
+            'support': '123456',
+            'shiva': '123456',
+            'suprika': '123456',
+            'chandana': '123456',
+            'chandrakala': '123456',
+            'indrakumar': '123456',
+            'sudarshan': '123456',
+            'rameshbabu': '123456'
+        };
+
+        loginButton.addEventListener('click', () => {
+            const username = document.getElementById('username').value.toLowerCase();
+            const password = document.getElementById('password').value;
+
+            if (users[username] && users[username] === password) {
+                localStorage.setItem('loggedInUser', username);
+                window.location.href = 'dashboard.html';
+            } else {
+                errorElement.textContent = 'Invalid username or password';
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- DASHBOARD PAGE (dashboard.html) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Select Engineering & Systems</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,7 +174,6 @@
         <h2 id="dashboardHeading">Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2>
         <p>Developed by KTS team</p>
 
-        <!-- Add Entry Section -->
         <div id="addEntrySection" style="display: none;">
             <h2>Add New Courier Entry</h2>
             <form id="entryForm">
@@ -110,7 +205,6 @@
             </form>
         </div>
 
-        <!-- View Entries Section -->
         <div id="viewEntriesSection" style="display: none;">
             <h2>Existing Entries</h2>
             <div class="table-container">
@@ -140,73 +234,4 @@
         const viewEntriesBtn = document.getElementById('viewEntriesBtn');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        const dashboardHeading = document.getElementById('dashboardHeading');
-        const addEntrySection = document.getElementById('addEntrySection');
-        const viewEntriesSection = document.getElementById('viewEntriesSection');
-        const entriesTableBody = document.getElementById('entriesTableBody');
-        const entryForm = document.getElementById('entryForm');
-
-        // Toggle sections
-        addEntryBtn.addEventListener('click', () => {
-            dashboardHeading.style.display = 'none';
-            addEntrySection.style.display = 'block';
-            viewEntriesSection.style.display = 'none';
-        });
-
-        viewEntriesBtn.addEventListener('click', () => {
-            dashboardHeading.style.display = 'none';
-            addEntrySection.style.display = 'none';
-            viewEntriesSection.style.display = 'block';
-            loadEntries();
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            window.location.href = 'login.html';
-        });
-
-        // Save entry
-        entryForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const newEntry = {
-                date: document.getElementById('date').value,
-                senderName: document.getElementById('senderName').value,
-                receiverName: document.getElementById('receiverName').value,
-                itemDescription: document.getElementById('itemDescription').value,
-                courierPartner: document.getElementById('courierPartner').value,
-                trackingNumber: document.getElementById('trackingNumber').value,
-                handoverBy: document.getElementById('handoverBy').value,
-                remarks: document.getElementById('remarks').value,
-            };
-
-            const entries = JSON.parse(localStorage.getItem('entries')) || [];
-            entries.push(newEntry);
-            localStorage.setItem('entries', JSON.stringify(entries));
-
-            alert('Entry saved successfully!');
-            entryForm.reset();
-        });
-
-        // Load entries
-        function loadEntries() {
-            const entries = JSON.parse(localStorage.getItem('entries')) || [];
-            entriesTableBody.innerHTML = '';
-
-            entries.forEach(entry => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${entry.date}</td>
-                    <td>${entry.senderName}</td>
-                    <td>${entry.receiverName}</td>
-                    <td>${entry.itemDescription}</td>
-                    <td>${entry.courierPartner}</td>
-                    <td>${entry.trackingNumber}</td>
-                    <td>${entry.handoverBy}</td>
-                    <td>${entry.remarks}</td>
-                `;
-                entriesTableBody.appendChild(row);
-            });
-        }
-    </script>
-</body>
-</html>
+        const dashboardHeading = document
