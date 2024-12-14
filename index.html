@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Engineering & Systems - Courier Portal</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,28 +18,16 @@
             text-align: center;
             padding: 20px;
         }
-        .logo {
-            width: 150px;
-        }
         h1 {
             margin: 10px 0;
         }
-        #dashboard {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            position: relative;
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
         }
-        nav {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        nav button {
+        button {
             padding: 10px 20px;
+            margin: 5px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
@@ -50,174 +35,164 @@
             background-color: grey;
             color: white;
         }
-        nav button.active {
-            background-color: #2980b9;
-        }
-        section {
-            display: none;
-        }
-        section.active {
-            display: block;
-        }
-        input, textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button.save {
-            background-color: #28a745;
-        }
-        footer {
+        .dashboard {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             text-align: center;
+        }
+        .table-container {
             margin-top: 20px;
-            font-size: 14px;
-            color: #555;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            background-color: #2C3E50;
+            color: white;
         }
     </style>
 </head>
 <body>
     <header>
-        <img src="https://www.selectengg.com/assets/images/logo.png" alt="Select Engineering & Systems Logo" class="logo">
-        <h1>Courier Portal</h1>
+        <h1>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h1>
     </header>
 
-    <main id="dashboard">
-        <nav>
-            <button id="home-btn">Home</button>
-            <button id="add-entry-btn">Add New Entry</button>
-            <button id="view-entries-btn">View Entries</button>
-            <button id="logout-btn">Logout</button>
-        </nav>
+    <div class="button-container">
+        <button id="addEntryBtn">Add New Entry</button>
+        <button id="viewEntriesBtn">View Existing Entries</button>
+        <button id="logoutBtn">Logout</button>
+    </div>
 
-        <section id="home" class="active">
-            <h2>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2>
-            <p>Developed by KTS team</p>
-        </section>
-
-        <section id="add-entry">
-            <h2>Add New Courier Entry</h2>
-            <form id="entry-form">
-                <label for="date">Date:</label>
-                <input type="date" id="date" required>
-
-                <label for="sender-name">Sender Name:</label>
-                <input type="text" id="sender-name" required>
-
-                <label for="receiver-name">Receiver Name:</label>
-                <input type="text" id="receiver-name" required>
-
-                <label for="item-description">Item Description:</label>
-                <textarea id="item-description" required></textarea>
-
-                <label for="courier-partner">Courier Partner Name:</label>
-                <input type="text" id="courier-partner" required>
-
-                <label for="tracking-number">AWB/Tracking No:</label>
-                <input type="text" id="tracking-number" required>
-
-                <label for="handover-by">Handover By:</label>
-                <input type="text" id="handover-by" required>
-
-                <label for="remarks">Remarks:</label>
-                <textarea id="remarks"></textarea>
-
-                <button type="submit" class="save">Save and Submit</button>
-            </form>
-        </section>
-
-        <section id="view-entries">
-            <h2>Existing Entries</h2>
-            <table id="entries-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Sender Name</th>
-                        <th>Receiver Name</th>
-                        <th>Item Description</th>
-                        <th>Courier Partner</th>
-                        <th>AWB/Tracking No</th>
-                        <th>Handover By</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be dynamically inserted here -->
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <footer>
-        <p>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</p>
+    <div class="dashboard" id="dashboard">
+        <h2 id="dashboardHeading">Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2>
         <p>Developed by KTS team</p>
-    </footer>
+
+        <!-- Add Entry Section -->
+        <div id="addEntrySection" style="display: none;">
+            <h2>Add New Courier Entry</h2>
+            <form id="entryForm">
+                <label for="date">Date:</label><br>
+                <input type="date" id="date" required><br><br>
+
+                <label for="senderName">Sender Name:</label><br>
+                <input type="text" id="senderName" required><br><br>
+
+                <label for="receiverName">Receiver Name:</label><br>
+                <input type="text" id="receiverName" required><br><br>
+
+                <label for="itemDescription">Item Description:</label><br>
+                <textarea id="itemDescription" required></textarea><br><br>
+
+                <label for="courierPartner">Courier Partner Name:</label><br>
+                <input type="text" id="courierPartner" required><br><br>
+
+                <label for="trackingNumber">AWB/Tracking No:</label><br>
+                <input type="text" id="trackingNumber" required><br><br>
+
+                <label for="handoverBy">Handover By:</label><br>
+                <input type="text" id="handoverBy" required><br><br>
+
+                <label for="remarks">Remarks:</label><br>
+                <textarea id="remarks"></textarea><br><br>
+
+                <button type="submit">Save Entry</button>
+            </form>
+        </div>
+
+        <!-- View Entries Section -->
+        <div id="viewEntriesSection" style="display: none;">
+            <h2>Existing Entries</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Sender Name</th>
+                            <th>Receiver Name</th>
+                            <th>Item Description</th>
+                            <th>Courier Partner</th>
+                            <th>AWB/Tracking No</th>
+                            <th>Handover By</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesTableBody">
+                        <!-- Entries will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <script>
-        const homeBtn = document.getElementById('home-btn');
-        const addEntryBtn = document.getElementById('add-entry-btn');
-        const viewEntriesBtn = document.getElementById('view-entries-btn');
-        const logoutBtn = document.getElementById('logout-btn');
+        const addEntryBtn = document.getElementById('addEntryBtn');
+        const viewEntriesBtn = document.getElementById('viewEntriesBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
 
-        const homeSection = document.getElementById('home');
-        const addEntrySection = document.getElementById('add-entry');
-        const viewEntriesSection = document.getElementById('view-entries');
-        const entryForm = document.getElementById('entry-form');
-        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
+        const dashboardHeading = document.getElementById('dashboardHeading');
+        const addEntrySection = document.getElementById('addEntrySection');
+        const viewEntriesSection = document.getElementById('viewEntriesSection');
+        const entriesTableBody = document.getElementById('entriesTableBody');
+        const entryForm = document.getElementById('entryForm');
 
-        let entries = []; // Array to store courier entries
-
-        // Navigation
-        homeBtn.addEventListener('click', () => {
-            showSection(homeSection);
-        });
-
+        // Toggle sections
         addEntryBtn.addEventListener('click', () => {
-            showSection(addEntrySection);
+            dashboardHeading.style.display = 'none';
+            addEntrySection.style.display = 'block';
+            viewEntriesSection.style.display = 'none';
         });
 
         viewEntriesBtn.addEventListener('click', () => {
-            showSection(viewEntriesSection);
-            renderEntries();
+            dashboardHeading.style.display = 'none';
+            addEntrySection.style.display = 'none';
+            viewEntriesSection.style.display = 'block';
+            loadEntries();
         });
 
         logoutBtn.addEventListener('click', () => {
-            alert('Logged out successfully!');
             window.location.href = 'login.html';
         });
 
-        function showSection(section) {
-            homeSection.classList.remove('active');
-            addEntrySection.classList.remove('active');
-            viewEntriesSection.classList.remove('active');
-            section.classList.add('active');
-        }
-
-        // Save new entry
-        entryForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        // Save entry
+        entryForm.addEventListener('submit', (event) => {
+            event.preventDefault();
 
             const newEntry = {
                 date: document.getElementById('date').value,
-                senderName: document.getElementById('sender-name').value,
-                receiverName: document.getElementById('receiver-name').value,
-                itemDescription: document.getElementById('item-description').value,
-                courierPartner: document.getElementById('courier-partner').value,
-                trackingNumber: document.getElementById('tracking-number').value,
-                handoverBy: document.getElementById('handover-by').value,
+                senderName: document.getElementById('senderName').value,
+                receiverName: document.getElementById('receiverName').value,
+                itemDescription: document.getElementById('itemDescription').value,
+                courierPartner: document.getElementById('courierPartner').value,
+                trackingNumber: document.getElementById('trackingNumber').value,
+                handoverBy: document.getElementById('handoverBy').value,
                 remarks: document.getElementById('remarks').value,
             };
 
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
             entries.push(newEntry);
+            localStorage.setItem('entries', JSON.stringify(entries));
+
             alert('Entry saved successfully!');
             entryForm.reset();
         });
 
-        // Render entries in the table
-        function renderEntries() {
-            entriesTable.innerHTML = '';
-            entries.forEach((entry) => {
+        // Load entries
+        function loadEntries() {
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entriesTableBody.innerHTML = '';
+
+            entries.forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${entry.date}</td>
@@ -229,7 +204,7 @@
                     <td>${entry.handoverBy}</td>
                     <td>${entry.remarks}</td>
                 `;
-                entriesTable.appendChild(row);
+                entriesTableBody.appendChild(row);
             });
         }
     </script>
