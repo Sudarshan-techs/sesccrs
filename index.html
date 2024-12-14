@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Engineering & Systems - Courier Portal</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -57,14 +53,14 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #3498db;
+            background-color: #b0b0b0; /* Grey color for buttons */
             color: white;
         }
         nav button:hover {
-            background-color: #2980b9;
+            background-color: #808080;
         }
         nav button.active {
-            background-color: #2980b9;
+            background-color: #606060;
         }
         input, textarea {
             width: 100%;
@@ -101,8 +97,8 @@
         }
         .welcome-message {
             text-align: center;
-            margin-top: 30px;
-            font-size: 18px;
+            margin-top: 50px;
+            font-size: 20px;
             color: #555;
         }
     </style>
@@ -130,13 +126,22 @@
     <!-- Main Dashboard -->
     <main id="dashboard">
         <nav>
-            <button id="home-btn">Home</button>
-            <button id="add-entry-btn" class="active">Add New Entry</button>
+            <button id="home-btn" class="active">Home</button>
+            <button id="add-entry-btn">Add New Entry</button>
             <button id="view-entries-btn">View Entries</button>
             <button id="logout-btn">Logout</button>
         </nav>
 
-        <section id="add-entry" class="active">
+        <!-- Home Section -->
+        <section id="home" class="active">
+            <div class="welcome-message">
+                Welcome to the Select Engineering & Systems - (KTS) Courier Portal<br>
+                Developed by KTS team
+            </div>
+        </section>
+
+        <!-- Add New Entry Section -->
+        <section id="add-entry">
             <h2>Add New Courier Entry</h2>
             <form id="entry-form">
                 <label for="date">Date:</label>
@@ -167,6 +172,7 @@
             </form>
         </section>
 
+        <!-- View Entries Section -->
         <section id="view-entries">
             <h2>Existing Entries</h2>
             <table id="entries-table">
@@ -187,148 +193,73 @@
                 </tbody>
             </table>
         </section>
-
-        <!-- Welcome Message -->
-        <div class="welcome-message" id="welcome-message">
-            <!-- Welcome message will be inserted dynamically -->
-        </div>
     </main>
 
     <script>
-        // Check login credentials and assign roles
         const loginForm = document.getElementById('login-form');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const loginPage = document.getElementById('login-page');
         const dashboardPage = document.getElementById('dashboard');
+        const homeSection = document.getElementById('home');
+        const addEntrySection = document.getElementById('add-entry');
+        const viewEntriesSection = document.getElementById('view-entries');
+        const homeBtn = document.getElementById('home-btn');
         const addEntryBtn = document.getElementById('add-entry-btn');
         const viewEntriesBtn = document.getElementById('view-entries-btn');
         const logoutBtn = document.getElementById('logout-btn');
-        const entryForm = document.getElementById('entry-form');
-        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
-        const welcomeMessage = document.getElementById('welcome-message');
 
-        // Define the user roles and passwords
         const users = {
-            'admin.ses': { role: 'admin', password: '123456' },
-            'support': { role: 'user', password: '123456' },
-            'shiva': { role: 'user', password: '123456' },
-            'suprika': { role: 'user', password: '123456' },
-            'chandana': { role: 'user', password: '123456' },
-            'chandrakala': { role: 'user', password: '123456' },
-            'indrakumar': { role: 'user', password: '123456' },
-            'sudarshan': { role: 'user', password: '123456' },
-            'rameshbabu': { role: 'user', password: '123456' },
+            'admin.ses': '123456',
+            'support': '123456',
+            'shiva': '123456',
+            'suprika': '123456',
+            // Add more users here...
         };
 
-        // Handle login form submission
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const username = usernameInput.value.trim().toLowerCase();
             const password = passwordInput.value.trim();
 
-            // Check credentials
-            if (users[username] && users[username].password === password) {
-                const userRole = users[username].role;
-                // Hide the login page and show the dashboard
+            if (users[username] === password) {
                 loginPage.style.display = 'none';
                 dashboardPage.style.display = 'block';
-
-                // Show the welcome message
-                welcomeMessage.innerHTML = `
-                    Welcome to the Select Engineering & Systems - (KTS) Courier Portal<br>
-                    Developed by KTS team
-                `;
-
-                // Set permissions based on the user role
-                if (userRole === 'admin') {
-                    // Admin can access both tabs
-                    addEntryBtn.style.display = 'inline-block';
-                } else {
-                    // Users can only access the View Entries tab
-                    addEntryBtn.style.display = 'none';
-                }
-
-                // Highlight the View Entries tab and show it
-                viewEntriesBtn.classList.add('active');
-                viewEntriesBtn.click();
             } else {
-                alert('Invalid username or password!');
+                alert('Invalid login credentials');
             }
         });
 
-        // Handle logout functionality
-        logoutBtn.addEventListener('click', () => {
-            // Show login page and hide dashboard
-            loginPage.style.display = 'block';
-            dashboardPage.style.display = 'none';
-
-            // Reset the form
-            usernameInput.value = '';
-            passwordInput.value = '';
+        homeBtn.addEventListener('click', () => {
+            homeSection.classList.add('active');
+            addEntrySection.classList.remove('active');
+            viewEntriesSection.classList.remove('active');
+            homeBtn.classList.add('active');
+            addEntryBtn.classList.remove('active');
+            viewEntriesBtn.classList.remove('active');
         });
 
-        // Switch between views
         addEntryBtn.addEventListener('click', () => {
-            document.getElementById('add-entry').classList.add('active');
-            document.getElementById('view-entries').classList.remove('active');
+            addEntrySection.classList.add('active');
+            homeSection.classList.remove('active');
+            viewEntriesSection.classList.remove('active');
             addEntryBtn.classList.add('active');
+            homeBtn.classList.remove('active');
             viewEntriesBtn.classList.remove('active');
         });
 
         viewEntriesBtn.addEventListener('click', () => {
-            document.getElementById('add-entry').classList.remove('active');
-            document.getElementById('view-entries').classList.add('active');
-            addEntryBtn.classList.remove('active');
+            viewEntriesSection.classList.add('active');
+            homeSection.classList.remove('active');
+            addEntrySection.classList.remove('active');
             viewEntriesBtn.classList.add('active');
-            fetchEntries();
+            homeBtn.classList.remove('active');
+            addEntryBtn.classList.remove('active');
         });
 
-        // Fetch and display existing entries from local storage or API
-        function fetchEntries() {
-            // Clear existing rows
-            entriesTable.innerHTML = '';
-            // Fetch data (simulated here with an example object)
-            const entries = JSON.parse(localStorage.getItem('entries') || '[]');
-            entries.forEach(entry => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${entry.date}</td>
-                    <td>${entry.senderName}</td>
-                    <td>${entry.receiverName}</td>
-                    <td>${entry.itemDescription}</td>
-                    <td>${entry.courierPartner}</td>
-                    <td>${entry.trackingNumber}</td>
-                    <td>${entry.handoverBy}</td>
-                    <td>${entry.remarks}</td>
-                `;
-                entriesTable.appendChild(row);
-            });
-        }
-
-        // Handle form submission for adding new entries
-        entryForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newEntry = {
-                date: document.getElementById('date').value,
-                senderName: document.getElementById('sender-name').value,
-                receiverName: document.getElementById('receiver-name').value,
-                itemDescription: document.getElementById('item-description').value,
-                courierPartner: document.getElementById('courier-partner').value,
-                trackingNumber: document.getElementById('tracking-number').value,
-                handoverBy: document.getElementById('handover-by').value,
-                remarks: document.getElementById('remarks').value
-            };
-            // Save the new entry to local storage
-            const entries = JSON.parse(localStorage.getItem('entries') || '[]');
-            entries.push(newEntry);
-            localStorage.setItem('entries', JSON.stringify(entries));
-
-            // Clear the form
-            entryForm.reset();
-
-            // Switch to the View Entries page
-            viewEntriesBtn.click();
+        logoutBtn.addEventListener('click', () => {
+            loginPage.style.display = 'block';
+            dashboardPage.style.display = 'none';
         });
     </script>
 </body>
