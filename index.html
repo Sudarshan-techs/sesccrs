@@ -33,7 +33,6 @@
             background-color: #fff;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            position: relative;
         }
         nav {
             display: flex;
@@ -57,19 +56,6 @@
         }
         section.active {
             display: block;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        table th {
-            background-color: #3498db;
-            color: white;
         }
         input, textarea {
             width: 100%;
@@ -167,6 +153,11 @@
     </footer>
 
     <script>
+        const isAuthenticated = localStorage.getItem('authenticated');
+        if (!isAuthenticated) {
+            window.location.href = 'login.html';
+        }
+
         const homeBtn = document.getElementById('home-btn');
         const addEntryBtn = document.getElementById('add-entry-btn');
         const viewEntriesBtn = document.getElementById('view-entries-btn');
@@ -178,39 +169,28 @@
         const entryForm = document.getElementById('entry-form');
         const entriesTable = document.getElementById('entries-table').querySelector('tbody');
 
-        let entries = JSON.parse(localStorage.getItem('entries')) || []; // Load from localStorage
+        let entries = JSON.parse(localStorage.getItem('entries')) || [];
 
-        // Navigation
-        homeBtn.addEventListener('click', () => {
-            showSection(homeSection);
-        });
-
-        addEntryBtn.addEventListener('click', () => {
-            showSection(addEntrySection);
-        });
-
+        homeBtn.addEventListener('click', () => showSection(homeSection));
+        addEntryBtn.addEventListener('click', () => showSection(addEntrySection));
         viewEntriesBtn.addEventListener('click', () => {
             showSection(viewEntriesSection);
             renderEntries();
         });
 
         logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('authenticated');
             alert('Logged out successfully!');
-            localStorage.clear(); // Clear localStorage on logout
             window.location.href = 'login.html';
         });
 
         function showSection(section) {
-            homeSection.classList.remove('active');
-            addEntrySection.classList.remove('active');
-            viewEntriesSection.classList.remove('active');
+            [homeSection, addEntrySection, viewEntriesSection].forEach(s => s.classList.remove('active'));
             section.classList.add('active');
         }
 
-        // Save new entry
         entryForm.addEventListener('submit', (e) => {
             e.preventDefault();
-
             const newEntry = {
                 date: document.getElementById('date').value,
                 senderName: document.getElementById('sender-name').value,
@@ -221,20 +201,29 @@
                 handoverBy: document.getElementById('handover-by').value,
                 remarks: document.getElementById('remarks').value,
             };
-
             entries.push(newEntry);
-            localStorage.setItem('entries', JSON.stringify(entries)); // Save to localStorage
-
+            localStorage.setItem('entries', JSON.stringify(entries));
             alert('Entry saved successfully!');
             entryForm.reset();
         });
 
-        // Render entries in the table
         function renderEntries() {
             entriesTable.innerHTML = '';
-            entries.forEach((entry) => {
+            entries.forEach(entry => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${entry.date}</td>
                     <td>${entry.senderName}</td>
-                    <td>${entry
+                    <td>${entry.receiverName}</td>
+                    <td>${entry.itemDescription}</td>
+                    <td>${entry.courierPartner}</td>
+                    <td>${entry.trackingNumber}</td>
+                    <td>${entry.handoverBy}</td>
+                    <td>${entry.remarks}</td>
+                `;
+                entriesTable.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
