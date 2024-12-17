@@ -7,67 +7,115 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f9;
         }
         header {
             background-color: #2C3E50;
+            padding: 20px;
             color: white;
             text-align: center;
-            padding: 20px;
+        }
+        header img {
+            max-width: 150px;
+        }
+        header h1 {
+            margin: 10px 0 0 0;
         }
         .container {
             max-width: 900px;
-            margin: 30px auto;
+            margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background: white;
             border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        nav {
+        .buttons {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
-        nav button {
-            padding: 10px 20px;
-            font-size: 16px;
+        .buttons button {
+            width: 30%;
+            padding: 15px;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
             background-color: grey;
             color: white;
         }
-        nav button:hover {
+        .buttons button:hover {
             background-color: #2980b9;
+        }
+        .content {
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Select Engineering & Systems - Courier Portal</h1>
+        <img src="https://www.selectengg.com/assets/images/logo.png" alt="Select Engineering & Systems Logo">
+        <h1>Select Engineering & Systems - Courier Portal</h1>
     </header>
+
     <div class="container">
-        <nav>
-            <button id="logout-btn">Logout</button>
-        </nav>
-        <h2>Welcome, <span id="user-name"></span>!</h2>
-        <p>Developed by KTS team</p>
+        <div class="buttons">
+            <button onclick="navigate('home')">Home</button>
+            <button onclick="navigate('new-entry')">New Entry</button>
+            <button onclick="navigate('existing-entries')">Existing Entries</button>
+        </div>
+        <div class="content" id="content">
+            <h2>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2>
+            <p>Developed by KTS team</p>
+        </div>
     </div>
 
-    <script>
-        const username = localStorage.getItem('user');
-        if (!username) {
-            window.location.href = 'login.html'; // Redirect to login if not logged in
-        } else {
-            document.getElementById('user-name').innerText = username;
-        }
+    <footer>
+        <p>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</p>
+        <p>Developed by KTS team</p>
+    </footer>
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.clear(); // Clear session data
-            window.location.href = 'logout.html'; // Redirect to logout page
-        });
+    <script>
+        function navigate(section) {
+            const content = document.getElementById('content');
+            if (section === 'home') {
+                content.innerHTML = `<h2>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2><p>Developed by KTS team</p>`;
+            } else if (section === 'new-entry') {
+                content.innerHTML = `
+                    <h2>Add New Courier Entry</h2>
+                    <form>
+                        <label>Date: <input type="date"></label><br>
+                        <label>Sender Name: <input type="text"></label><br>
+                        <label>Receiver Name: <input type="text"></label><br>
+                        <label>Item Description: <textarea></textarea></label><br>
+                        <button type="submit">Save</button>
+                    </form>`;
+            } else if (section === 'existing-entries') {
+                content.innerHTML = `
+                    <h2>Existing Entries</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Sender</th>
+                                <th>Receiver</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>2024-12-17</td><td>John</td><td>Doe</td><td>Package</td></tr>
+                        </tbody>
+                    </table>`;
+            }
+        }
     </script>
 </body>
 </html>
