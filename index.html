@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Engineering & Systems - Courier Portal</title>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore.js"></script>
+    <title>Dashboard - Select Engineering & Systems</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,13 +17,7 @@
             text-align: center;
             padding: 20px;
         }
-        .logo {
-            width: 150px;
-        }
-        h1 {
-            margin: 10px 0;
-        }
-        #dashboard {
+        .container {
             max-width: 900px;
             margin: 30px auto;
             padding: 20px;
@@ -36,7 +27,7 @@
         }
         nav {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             margin-bottom: 20px;
         }
         nav button {
@@ -48,182 +39,35 @@
             background-color: grey;
             color: white;
         }
-        nav button.active {
+        nav button:hover {
             background-color: #2980b9;
-        }
-        section {
-            display: none;
-        }
-        section.active {
-            display: block;
-        }
-        input, textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button.save {
-            background-color: #28a745;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
         }
     </style>
 </head>
 <body>
     <header>
-        <img src="https://www.selectengg.com/assets/images/logo.png" alt="Select Engineering & Systems Logo" class="logo">
-        <h1>Courier Portal</h1>
+        <h1>Welcome to Select Engineering & Systems - Courier Portal</h1>
     </header>
-
-    <main id="dashboard">
+    <div class="container">
         <nav>
-            <button id="home-btn">Home</button>
-            <button id="add-entry-btn">Add New Entry</button>
-            <button id="view-entries-btn">View Entries</button>
             <button id="logout-btn">Logout</button>
         </nav>
-
-        <section id="home" class="active">
-            <h2>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</h2>
-            <p>Developed by KTS team</p>
-        </section>
-
-        <section id="add-entry">
-            <h2>Add New Courier Entry</h2>
-            <form id="entry-form">
-                <label for="date">Date:</label>
-                <input type="date" id="date" required>
-
-                <label for="sender-name">Sender Name:</label>
-                <input type="text" id="sender-name" required>
-
-                <label for="receiver-name">Receiver Name:</label>
-                <input type="text" id="receiver-name" required>
-
-                <label for="item-description">Item Description:</label>
-                <textarea id="item-description" required></textarea>
-
-                <label for="courier-partner">Courier Partner Name:</label>
-                <input type="text" id="courier-partner" required>
-
-                <label for="tracking-number">AWB/Tracking No:</label>
-                <input type="text" id="tracking-number" required>
-
-                <label for="handover-by">Handover By:</label>
-                <input type="text" id="handover-by" required>
-
-                <label for="remarks">Remarks:</label>
-                <textarea id="remarks"></textarea>
-
-                <button type="submit" class="save">Save and Submit</button>
-            </form>
-        </section>
-
-        <section id="view-entries">
-            <h2>Existing Entries</h2>
-            <table id="entries-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Sender Name</th>
-                        <th>Receiver Name</th>
-                        <th>Item Description</th>
-                        <th>Courier Partner</th>
-                        <th>AWB/Tracking No</th>
-                        <th>Handover By</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be dynamically inserted here -->
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <footer>
-        <p>Welcome to the Select Engineering & Systems - (KTS) Courier Portal</p>
+        <h2>Welcome, <span id="user-name"></span>!</h2>
         <p>Developed by KTS team</p>
-    </footer>
+    </div>
 
     <script>
-        const isAuthenticated = localStorage.getItem('authenticated');
-        if (!isAuthenticated) {
-            window.location.href = 'login.html';
+        const username = localStorage.getItem('user');
+        if (!username) {
+            window.location.href = 'login.html'; // Redirect to login if not logged in
+        } else {
+            document.getElementById('user-name').innerText = username;
         }
 
-        const homeBtn = document.getElementById('home-btn');
-        const addEntryBtn = document.getElementById('add-entry-btn');
-        const viewEntriesBtn = document.getElementById('view-entries-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        const homeSection = document.getElementById('home');
-        const addEntrySection = document.getElementById('add-entry');
-        const viewEntriesSection = document.getElementById('view-entries');
-        const entryForm = document.getElementById('entry-form');
-        const entriesTable = document.getElementById('entries-table').querySelector('tbody');
-
-        let entries = JSON.parse(localStorage.getItem('entries')) || [];
-
-        homeBtn.addEventListener('click', () => showSection(homeSection));
-        addEntryBtn.addEventListener('click', () => showSection(addEntrySection));
-        viewEntriesBtn.addEventListener('click', () => {
-            showSection(viewEntriesSection);
-            renderEntries();
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.clear(); // Clear session data
+            window.location.href = 'logout.html'; // Redirect to logout page
         });
-
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('authenticated');
-            alert('Logged out successfully!');
-            window.location.href = 'login.html';
-        });
-
-        function showSection(section) {
-            [homeSection, addEntrySection, viewEntriesSection].forEach(s => s.classList.remove('active'));
-            section.classList.add('active');
-        }
-
-        entryForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newEntry = {
-                date: document.getElementById('date').value,
-                senderName: document.getElementById('sender-name').value,
-                receiverName: document.getElementById('receiver-name').value,
-                itemDescription: document.getElementById('item-description').value,
-                courierPartner: document.getElementById('courier-partner').value,
-                trackingNumber: document.getElementById('tracking-number').value,
-                handoverBy: document.getElementById('handover-by').value,
-                remarks: document.getElementById('remarks').value,
-            };
-            entries.push(newEntry);
-            localStorage.setItem('entries', JSON.stringify(entries));
-            alert('Entry saved successfully!');
-            entryForm.reset();
-        });
-
-        function renderEntries() {
-            entriesTable.innerHTML = '';
-            entries.forEach(entry => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${entry.date}</td>
-                    <td>${entry.senderName}</td>
-                    <td>${entry.receiverName}</td>
-                    <td>${entry.itemDescription}</td>
-                    <td>${entry.courierPartner}</td>
-                    <td>${entry.trackingNumber}</td>
-                    <td>${entry.handoverBy}</td>
-                    <td>${entry.remarks}</td>
-                `;
-                entriesTable.appendChild(row);
-            });
-        }
     </script>
 </body>
 </html>
